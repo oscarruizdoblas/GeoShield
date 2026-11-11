@@ -1,0 +1,12 @@
+# Forzar finales de linea LF en todo lo que se ejecuta en WSL/Linux,
+# para que los scripts no se rompan al clonar en Windows.
+*.sh    text eol=lf
+*.py    text eol=lf
+*.sdf   text eol=lf
+*.obj   text eol=lf
+*.mtl   text eol=lf
+*.plan  text eol=lf
+*.md    text eol=lf
+
+# Binarios
+*.png   binary

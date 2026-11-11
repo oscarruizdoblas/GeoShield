@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<sdf version="1.9">
+  <world name="padova">
+    <physics type="ode">
+      <max_step_size>0.004</max_step_size>
+      <real_time_factor>1.0</real_time_factor>
+      <real_time_update_rate>250</real_time_update_rate>
+    </physics>
+    <gravity>0 0 -9.8</gravity>
+    <magnetic_field>6e-06 2.3e-05 -4.2e-05</magnetic_field>
+    <atmosphere type="adiabatic"/>
+    <scene><grid>false</grid><ambient>0.5 0.5 0.5 1</ambient><background>0.75 0.82 0.9 1</background><shadows>true</shadows></scene>
+
+    <model name="ground_plane"><static>true</static>
+      <link name="link">
+        <collision name="collision"><geometry><plane><normal>0 0 1</normal><size>1 1</size></plane></geometry>
+          <surface><friction><ode/></friction><bounce/><contact/></surface></collision>
+      </link>
+    </model>
+
+    <model name="padova_map"><static>true</static>
+      <pose>813.7 510.3 0 0 0 0</pose>
+      <link name="link"><visual name="visual">
+        <geometry><mesh><uri>model://padova_ground/padova_ground.obj</uri></mesh></geometry>
+      </visual></link>
+    </model>
+
+    <model name="keepout_0"><static>true</static>
+      <pose>812.4 512.7 35.0 0 0 0</pose>
+      <link name="link"><visual name="v">
+        <geometry><cylinder><radius>220.0</radius><length>70.0</length></cylinder></geometry>
+        <transparency>0.55</transparency>
+        <material><ambient>1 0 0 1</ambient><diffuse>1 0 0 1</diffuse><emissive>0.45 0 0 1</emissive></material>
+      </visual></link>
+    </model>
+    <model name="keepout_1"><static>true</static>
+      <pose>347.7 650.6 35.0 0 0 0</pose>
+      <link name="link"><visual name="v">
+        <geometry><cylinder><radius>150.0</radius><length>70.0</length></cylinder></geometry>
+        <transparency>0.55</transparency>
+        <material><ambient>1 0 0 1</ambient><diffuse>1 0 0 1</diffuse><emissive>0.45 0 0 1</emissive></material>
+      </visual></link>
+    </model>
+
+    <model name="start_A"><static>true</static>
+      <pose>0.0 0.0 30 0 0 0</pose>
+      <link name="link"><visual name="v">
+        <geometry><cylinder><radius>8</radius><length>60</length></cylinder></geometry>
+        <material><ambient>0 1 0 1</ambient><diffuse>0 1 0 1</diffuse><emissive>0 1 0 1</emissive></material>
+      </visual></link>
+    </model>
+    <model name="dest_B"><static>true</static>
+      <pose>1627.4 1020.6 30 0 0 0</pose>
+      <link name="link"><visual name="v">
+        <geometry><cylinder><radius>8</radius><length>60</length></cylinder></geometry>
+        <material><ambient>1 1 0 1</ambient><diffuse>1 1 0 1</diffuse><emissive>1 1 0 1</emissive></material>
+      </visual></link>
+    </model>
+
+    <model name="bld_bo_0"><static>true</static>
+      <pose>732.4 562.7 24.0 0 0 0</pose>
+      <link name="link"><visual name="v">
+        <geometry><box><size>35.0 30.0 48.0</size></box></geometry>
+        <material><ambient>0.55 0.55 0.58 1</ambient><diffuse>0.62 0.62 0.66 1</diffuse></material>
+      </visual></link>
+    </model>
+    <model name="bld_bo_1"><static>true</static>
+      <pose>852.4 592.7 27.5 0 0 0</pose>
+      <link name="link"><visual name="v">
+        <geometry><box><size>28.0 40.0 55.0</size></box></geometry>
+        <material><ambient>0.55 0.55 0.58 1</ambient><diffuse>0.62 0.62 0.66 1</diffuse></material>
+      </visual></link>
+    </model>
+    <model name="bld_bo_2"><static>true</static>
+      <pose>902.4 482.7 20.0 0 0 0</pose>
+      <link name="link"><visual name="v">
+        <geometry><box><size>40.0 35.0 40.0</size></box></geometry>
+        <material><ambient>0.55 0.55 0.58 1</ambient><diffuse>0.62 0.62 0.66 1</diffuse></material>
+      </visual></link>
+    </model>
+    <model name="bld_bo_3"><static>true</static>
+      <pose>762.4 432.7 16.0 0 0 0</pose>
+      <link name="link"><visual name="v">
+        <geometry><box><size>30.0 30.0 32.0</size></box></geometry>
+        <material><ambient>0.55 0.55 0.58 1</ambient><diffuse>0.62 0.62 0.66 1</diffuse></material>
+      </visual></link>
+    </model>
+    <model name="bld_bo_4"><static>true</static>
+      <pose>827.4 512.7 30.0 0 0 0</pose>
+      <link name="link"><visual name="v">
+        <geometry><box><size>45.0 45.0 60.0</size></box></geometry>
+        <material><ambient>0.55 0.55 0.58 1</ambient><diffuse>0.62 0.62 0.66 1</diffuse></material>
+      </visual></link>
+    </model>
+    <model name="bld_bo_5"><static>true</static>
+      <pose>897.4 612.7 14.0 0 0 0</pose>
+      <link name="link"><visual name="v">
+        <geometry><box><size>25.0 25.0 28.0</size></box></geometry>
+        <material><ambient>0.55 0.55 0.58 1</ambient><diffuse>0.62 0.62 0.66 1</diffuse></material>
+      </visual></link>
+    </model>
+    <model name="bld_liv_0"><static>true</static>
+      <pose>347.7 650.6 25.0 0 0 0</pose>
+      <link name="link"><visual name="v">
+        <geometry><box><size>45.0 55.0 50.0</size></box></geometry>
+        <material><ambient>0.55 0.55 0.58 1</ambient><diffuse>0.62 0.62 0.66 1</diffuse></material>
+      </visual></link>
+    </model>
+    <model name="bld_liv_1"><static>true</static>
+      <pose>287.7 680.6 15.0 0 0 0</pose>
+      <link name="link"><visual name="v">
+        <geometry><box><size>30.0 30.0 30.0</size></box></geometry>
+        <material><ambient>0.55 0.55 0.58 1</ambient><diffuse>0.62 0.62 0.66 1</diffuse></material>
+      </visual></link>
+    </model>
+    <model name="bld_liv_2"><static>true</static>
+      <pose>402.7 615.6 17.5 0 0 0</pose>
+      <link name="link"><visual name="v">
+        <geometry><box><size>35.0 28.0 35.0</size></box></geometry>
+        <material><ambient>0.55 0.55 0.58 1</ambient><diffuse>0.62 0.62 0.66 1</diffuse></material>
+      </visual></link>
+    </model>
+    <light name="sunUTC" type="directional">
+      <pose>0 0 500 0 0 0</pose><cast_shadows>true</cast_shadows><intensity>1</intensity>
+      <direction>0.001 0.625 -0.78</direction>
+      <diffuse>0.904 0.904 0.904 1</diffuse><specular>0.271 0.271 0.271 1</specular>
+      <attenuation><range>2000</range><linear>0</linear><constant>1</constant><quadratic>0</quadratic></attenuation>
+      <spot><inner_angle>0</inner_angle><outer_angle>0</outer_angle><falloff>0</falloff></spot>
+    </light>
+    <spherical_coordinates>
+      <surface_model>EARTH_WGS84</surface_model><world_frame_orientation>ENU</world_frame_orientation>
+      <latitude_deg>45.4021000</latitude_deg><longitude_deg>11.8670000</longitude_deg><elevation>12</elevation>
+    </spherical_coordinates>
+  </world>
+</sdf>
