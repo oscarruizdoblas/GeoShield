@@ -13,6 +13,7 @@ from matplotlib.patches import Circle
 import sys
 sys.path.insert(0, '/home/oruiz/geoshield')
 from zones import START, DEST, KEEPOUT, START_NAME, DEST_NAME
+from planner import plan
 
 # Puntos origen/destino: por defecto A->B de zones.py; o cualquier C->D por argumentos:
 #   python3 plan_route.py  Clat Clon Dlat Dlon  [tag]
@@ -23,8 +24,7 @@ if len(_a) >= 4:
     START_NAME = 'C - origen'; DEST_NAME = 'D - destino'
     TAG = _a[4] if len(_a) >= 5 else 'demo_CD'
 
-MARGIN = 75.0      # m de seguridad alrededor de cada zona
-NRING  = 48        # puntos por circulo
+MARGIN = 75.0      # m de seguridad alrededor de cada zona (igual que el planificador)
 lat0 = (START[0] + DEST[0]) / 2.0
 MPLAT, MPLON = 110540.0, 111320.0 * math.cos(math.radians(lat0))
 lon0 = (START[1] + DEST[1]) / 2.0
@@ -34,54 +34,12 @@ def ll(e, n):     return (lat0 + n / MPLAT, lon0 + e / MPLON)
 A = en(*START); B = en(*DEST)
 ZON = [(en(z['lat'], z['lon']), z['r'], z['name']) for z in KEEPOUT]
 
-def seg_hits_disc(p, q, c, r):
-    # distancia minima del segmento pq al centro c < r  -> lo atraviesa
-    px, py = p; qx, qy = q; cx, cy = c
-    dx, dy = qx - px, qy - py
-    L2 = dx*dx + dy*dy
-    t = 0.0 if L2 == 0 else max(0.0, min(1.0, ((cx-px)*dx + (cy-py)*dy)/L2))
-    hx, hy = px + t*dx, py + t*dy
-    return math.hypot(cx-hx, cy-hy) < r - 1e-6
-
-def blocked(p, q):
-    return any(seg_hits_disc(p, q, c, r) for (c, r, _) in ZON)
-
-# ---- nodos: A, B, anillos alrededor de cada zona ----
-nodes = [A, B]
-for (c, r, _) in ZON:
-    for k in range(NRING):
-        a = 2*math.pi*k/NRING
-        nodes.append((c[0] + (r+MARGIN)*math.cos(a), c[1] + (r+MARGIN)*math.sin(a)))
-N = len(nodes)
-
-# ---- aristas visibles ----
-adj = [[] for _ in range(N)]
-for i in range(N):
-    for j in range(i+1, N):
-        if not blocked(nodes[i], nodes[j]):
-            d = math.hypot(nodes[i][0]-nodes[j][0], nodes[i][1]-nodes[j][1])
-            adj[i].append((j, d)); adj[j].append((i, d))
-
-# ---- Dijkstra A(0) -> B(1) ----
-INF = float('inf'); dist = [INF]*N; prev = [-1]*N; dist[0] = 0
-pq = [(0.0, 0)]
-while pq:
-    d, u = heapq.heappop(pq)
-    if d > dist[u]: continue
-    if u == 1: break
-    for v, w in adj[u]:
-        nd = d + w
-        if nd < dist[v]:
-            dist[v] = nd; prev[v] = u; heapq.heappush(pq, (nd, v))
-path = []
-u = 1
-while u != -1:
-    path.append(nodes[u]); u = prev[u]
-path.reverse()
-
+# Ruta con el planificador UNICO (planner.plan) -> IDENTICA a la que vuela el dron
+# (plan_and_fly.py) y a la mision del .plan de QGC (make_qgc_plan.py). Sin logica
+# duplicada aqui: una sola fuente de verdad para que mapa, QGC y vuelo coincidan.
+waypoints, d_route, crossed = plan(START, DEST, KEEPOUT, margin=MARGIN)
+path = [en(la, lo) for (la, lo) in waypoints]
 d_direct = math.hypot(B[0]-A[0], B[1]-A[1])
-d_route  = dist[1]
-crossed = [nm for (c, r, nm) in ZON if seg_hits_disc(A, B, c, r)]
 print("recta directa A->B: %.0f m  (cruza: %s)" % (d_direct, ", ".join(crossed) or "ninguna"), flush=True)
 print("ruta esquivando  : %.0f m  (%d waypoints)  +%.0f m (%.0f%%)" % (d_route, len(path), d_route-d_direct, 100*(d_route-d_direct)/d_direct), flush=True)
 
@@ -89,8 +47,8 @@ print("ruta esquivando  : %.0f m  (%d waypoints)  +%.0f m (%.0f%%)" % (d_route, 
 mi = os.path.expanduser('~/geoshield/mission_%s.csv' % TAG)
 with open(mi, 'w', newline='') as f:
     w = csv.writer(f); w.writerow(['idx', 'lat', 'lon'])
-    for i, p in enumerate(path):
-        la, lo = ll(*p); w.writerow([i, "%.7f" % la, "%.7f" % lo])
+    for i, (la, lo) in enumerate(waypoints):
+        w.writerow([i, "%.7f" % la, "%.7f" % lo])
 print("mision:", mi, flush=True)
 
 # ---- mapa OSM ----
