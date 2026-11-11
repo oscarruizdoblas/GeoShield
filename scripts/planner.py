@@ -23,8 +23,12 @@ def plan(start, dest, keepout, margin=75.0, nring=48):
         t = 0.0 if L2 == 0 else max(0.0, min(1.0, ((cx-px)*dx + (cy-py)*dy)/L2))
         hx, hy = px + t*dx, py + t*dy
         return math.hypot(cx-hx, cy-hy) < r - 1e-6
+    cosr = math.cos(math.pi / nring)   # dip de la cuerda entre nodos vecinos del anillo
     def blocked(p, q):
-        return any(seg_hits(p, q, c, r) for (c, r, _) in ZON)
+        # Comprueba contra el radio INFLADO (r+margin), corregido por la cuerda entre
+        # nodos vecinos, para que la ruta se pegue al arco y conserve ~margin de colchon
+        # real (si se comprobara solo contra r, las cuerdas podrian rozar la zona).
+        return any(seg_hits(p, q, c, (r + margin) * cosr - 0.5) for (c, r, _) in ZON)
 
     nodes = [A, B]
     for (c, r, _) in ZON:

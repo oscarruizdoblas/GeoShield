@@ -123,10 +123,18 @@ while time.time()-t0 < 18:
 for i, (wlat, wlon) in enumerate(wps[1:], 1):   # wps[0] = origen (donde ya estamos)
     fly(wlat, wlon, "wp%d" % i)
 
-print("RTL ...", flush=True)
+# ---------- VUELTA: misma ruta optima de la ida, en sentido inverso ----------
+# Reutilizamos los waypoints de la ida al reves (optima e identica a la ida);
+# un RTL recto volveria cruzando las zonas, por eso no se usa para la vuelta.
+rwps = list(reversed(wps))
+print("VUELTA: misma ruta optima en sentido inverso, %.0f m, %d waypoints" % (L, len(rwps)), flush=True)
+for i, (wlat, wlon) in enumerate(rwps[1:], 1):
+    fly(wlat, wlon, "ret%d" % i)
+
+print("RTL final: aterrizaje en casa...", flush=True)
 cmd_long(mavutil.mavlink.MAV_CMD_NAV_RETURN_TO_LAUNCH); ack(20)
 t0 = time.time()
-while time.time()-t0 < 60:
+while time.time()-t0 < 90:
     msg = m.recv_match(blocking=True, timeout=1)
     if msg is None: continue
     logmsg(msg)
