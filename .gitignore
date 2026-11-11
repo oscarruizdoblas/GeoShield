@@ -16,3 +16,13 @@ desktop.ini
 # Temporales
 *.tmp
 *~
+
+# Entregables locales (resumenes, mapas, graficas) — NO en el repo de Ignacio,
+# pero se conservan en el disco de Oscar
+RESUMEN_DIA2.md
+GeoShield_DIA1_traspaso.md
+baseline_hist.png
+demo_CD_map.png
+mapa_padua.png
+scenario_map.png
+trayectoria.png
