@@ -71,13 +71,29 @@ Tres terminales en WSL:
 ```bash
 bash ~/geoshield/run_padova.sh      # SITL headless: mundo padova, HOME=A (45.4021, 11.8670)
 bash ~/geoshield/run_gui.sh         # ventana de Gazebo (render por software, estable en WSLg)
-bash ~/geoshield/follow_cam.sh      # (opcional) la cámara sigue al dron x500_0
+bash ~/geoshield/cam_birdseye.sh    # cámara cenital siguiendo al dron (zonas a escala de mapa, como en QGC)
+# bash ~/geoshield/follow_cam.sh    # alternativa: cámara cercana en picado
 ```
-Verás: el dron sobre el mapa real de Padova, 2 cilindros rojos (Bo y Liviano), marcador verde en A y amarillo en B (Torre Archimede).
+Verás: el dron sobre el mapa real de Padova, 2 cilindros rojos (Bo r=220 m y Liviano r=150 m), marcador verde en A y amarillo en B (Torre Archimede).
 
 ### c) QGroundControl — mismo geofence y misión
 
-Abre QGC (se conecta solo por el **14550**), ve a **Plan → Open** y carga **`geoshield_padova.plan`**. Verás el keep-in + las 2 zonas keep-out + la ruta normal A→B. (Si lo prefieres regenerar: `python3 make_qgc_plan.py`.)
+Abre QGC (se conecta solo por el **14550**). Dos formas de ver las mismas zonas:
+
+- **Subir el geofence a PX4** (recomendado; PX4 lo aplica y QGC lo pinta solo al conectarse):
+  ```bash
+  python3 ~/geoshield/upload_fence.py     # usa el 14540: que no haya otro script volando a la vez
+  ```
+- **Cargar el plan**: **Plan → Open → `geoshield_padova.plan`** (keep-in + 2 keep-out + ruta normal A→B). Para regenerarlo: `python3 make_qgc_plan.py`.
+
+Los círculos son los mismos que en Gazebo: Bo 220 m y Liviano 150 m. El círculo grande de 1500 m es el **keep-in** (zona permitida), no una zona prohibida.
+
+### d) Vuelo de comprobación
+
+```bash
+python3 ~/geoshield/plan_and_fly.py     # A→B rodeando Palazzo Bo y vuelta por la misma ruta
+```
+Resultado esperado: ruta de 2010 m (7 waypoints), distancia mínima a Palazzo Bo ≈ 290 m (radio 220 m), aterrizaje en A.
 
 ## 4. Lo que necesito de ti (el ataque)
 
