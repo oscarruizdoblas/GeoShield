@@ -92,22 +92,31 @@ while time.time()-t0 < 6:
     if g: cur_amsl = g.alt/1000.0; logmsg(g); break
 to_amsl = cur_amsl + REL_ALT
 
-def fly(lat, lon, tag, timeout=120, reach=18.0):
+def fly(lat, lon, tag, timeout=None, reach=18.0):
+    # timeout=None -> se calcula segun la distancia del tramo (un tramo de ~900 m a 7 m/s
+    # tarda ~130 s: con un tope fijo de 120 s se pasaba al siguiente waypoint sin llegar).
     m.mav.command_int_send(TS, TC, mavutil.mavlink.MAV_FRAME_GLOBAL_INT,
                            mavutil.mavlink.MAV_CMD_DO_REPOSITION, 0, 0,
                            SPEED, 1.0, 0.0, float('nan'), int(lat*1e7), int(lon*1e7), to_amsl)
     ack(192)
     t0 = time.time(); lp = 0
-    while time.time()-t0 < timeout:
+    while timeout is None or time.time()-t0 < timeout:
         msg = m.recv_match(blocking=True, timeout=1)
-        if msg is None: continue
+        if msg is None:
+            if timeout is None and time.time()-t0 > 30:
+                print("[%s] AVISO: sin telemetria 30 s" % tag, flush=True); return False
+            continue
         logmsg(msg)
         if msg.get_type() == 'GLOBAL_POSITION_INT':
             d = hav(lat, lon, msg.lat/1e7, msg.lon/1e7)
+            if timeout is None:
+                timeout = (time.time()-t0) + 2.0 * d / SPEED + 60.0
             if time.time()-lp > 2:
                 print("[%s] rel_alt=%.1f dist_wp=%.0f" % (tag, msg.relative_alt/1000.0, d), flush=True); lp = time.time()
             if d < reach:
-                print("[%s] waypoint alcanzado" % tag, flush=True); return
+                print("[%s] waypoint alcanzado" % tag, flush=True); return True
+    print("[%s] AVISO: waypoint NO alcanzado (timeout), sigo con el siguiente" % tag, flush=True)
+    return False
 
 print("ARMAR + DESPEGAR a %.0f m..." % REL_ALT, flush=True)
 cmd_long(mavutil.mavlink.MAV_CMD_COMPONENT_ARM_DISARM, 1); ack(400); time.sleep(1)
