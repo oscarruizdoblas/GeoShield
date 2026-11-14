@@ -37,3 +37,7 @@ python3 scripts/plan_and_fly.py
 ```
 Los scripts esperan estar en `~/geoshield/` (copia ahí el contenido de `scripts/`). En QGC también se puede cargar a mano: Plan → Open → `geoshield_padova.plan`.
 Detalles y la opción de regenerar el mundo: ver `GeoShield_traspaso_Ignacio.md`.
+
+## Experimental Validation
+
+GeoShield's validation plan uses four software-only SITL experiments: **01 Normal Autonomous Flight** establishes the GPS-valid route and telemetry baseline; **02 Gradual GPS Manipulation** studies estimator divergence under slow simulated drift; **03 Abrupt GPS Manipulation** studies sudden position jumps; and **04 GeoShield Defence** evaluates anomaly detection and defensive response under simulated manipulation. The completed baseline and its limitations are documented in the [Experiment 01 technical report](docs/experiments/EXP-01_NORMAL_AUTONOMOUS_FLIGHT.md).
