@@ -7,6 +7,6 @@
 *.mtl   text eol=lf
 *.plan  text eol=lf
 *.md    text eol=lf
-
+*.csv   text eol=lf
 # Binarios
 *.png   binary

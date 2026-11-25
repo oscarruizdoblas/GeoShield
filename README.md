@@ -1,43 +1,55 @@
-# GeoShield
+# GeoShield — proyecto de simulación
 
-Proyecto de **Cyberphysical and IoT Security** (Erasmus, Padova). En **simulación** (PX4 SITL + Gazebo, sin hardware ni radio real) estudiamos ataques de **GPS spoofing** contra un dron autónomo y construimos **detección + geofencing resiliente**.
-
-- **Oscar** (oscarruizdoblas): geofencing, planificación de ruta, detector, análisis, QGC, mundo 3D.
-- **Ignacio**: simulación PX4/Gazebo y módulo de ataque (spoofing).
-
-## Escenario (Padova, coords reales OSM)
-- **A (salida / HOME):** Riviera Paleocapa — `45.4021, 11.8670`
-- **B (destino):** Torre Archimede / Dip. Matematica "Tullio Levi-Civita" — `45.4113328, 11.8878209`
-- **Zonas prohibidas (keep-out):** Palazzo Bo (`45.4067383, 11.8773940`, r=220 m) y Palazzo Liviano (`45.4079860, 11.8714491`, r=150 m)
-- La recta A→B **cruza Palazzo Bo** → en vuelo normal lo rodea; el vuelo con spoofing lo hará entrar.
-
-> **Fuente única de las zonas: [`scripts/zones.py`](scripts/zones.py).** Los dos usamos el mismo fichero.
+Proyecto académico para evaluar, en **PX4 SITL**, cómo se comportan la planificación, las geocercas y la detección de anomalías en un escenario de Padova. El trabajo documentado hasta ahora es el vuelo normal de referencia del Experimento 01. Los Experimentos 02–04 siguen pendientes y no se han ejecutado.
 
 ## Estructura
-- `scripts/` — todo el código (`zones.py`, `planner.py`, `plan_and_fly.py`, `detector.py`, `analyze.py`, `check_fp.py`, `logger.py`, `make_qgc_plan.py`, `make_texture.py`, `build_world.py`, `upload_fence.py`) y los lanzadores (`run_padova.sh`, `run_gui.sh`, `cam_birdseye.sh`, `follow_cam.sh`, `gz_env.sh`).
-- `gazebo_assets/` — mundo 3D de Padova ya generado (`worlds/padova.sdf` + `models/padova_ground/`), para no re-descargar teselas.
-- `geoshield_padova.plan` — geofence + misión A→B para QGroundControl.
-- `GeoShield_traspaso_Ignacio.md` — **cómo montar el mismo mapa e interfaz** (empieza por aquí).
 
-## Puesta en marcha rápida (WSL)
-```bash
-# 1) copiar el mundo 3D al arbol de PX4 (una vez)
-cp gazebo_assets/worlds/padova.sdf   ~/PX4-Autopilot/Tools/simulation/gz/worlds/
-mkdir -p ~/PX4-Autopilot/Tools/simulation/gz/models/padova_ground
-cp gazebo_assets/models/padova_ground/*  ~/PX4-Autopilot/Tools/simulation/gz/models/padova_ground/
-
-# 2) lanzar (3 terminales)
-bash scripts/run_padova.sh      # SITL headless, mundo padova, HOME=A
-bash scripts/run_gui.sh         # ventana de Gazebo
-bash scripts/cam_birdseye.sh    # camara cenital siguiendo al dron
-
-# 3) geofence en PX4 (QGC lo pinta solo) y vuelo de comprobacion A->B->A
-python3 scripts/upload_fence.py
-python3 scripts/plan_and_fly.py
+```text
+code/
+├── qground/       # plan de misión y geofence que se abre en QGroundControl
+├── gazebo/        # mundo, modelo del terreno y lanzadores de Gazebo
+└── python/        # configuración y herramientas Python
+docs/
+├── experimento-01/ # vuelo normal, informe y evidencias disponibles
+├── experimento-02/ # plan de deriva GPS gradual; aún no ejecutado
+├── experimento-03/ # plan de salto GPS abrupto; aún no ejecutado
+├── experimento-04/ # plan de evaluación de GeoShield; aún no ejecutado
+└── README.md       # resumen y estado de los cuatro experimentos
 ```
-Los scripts esperan estar en `~/geoshield/` (copia ahí el contenido de `scripts/`). En QGC también se puede cargar a mano: Plan → Open → `geoshield_padova.plan`.
-Detalles y la opción de regenerar el mundo: ver `GeoShield_traspaso_Ignacio.md`.
 
-## Experimental Validation
+La configuración geográfica canónica está en [`code/python/zones.py`](code/python/zones.py). El plan de QGroundControl está en [`code/qground/geoshield_padova.plan`](code/qground/geoshield_padova.plan); el mundo de Gazebo y el plan comparten las zonas de la configuración del proyecto. Consulta [`code/python/README.md`](code/python/README.md) para saber qué hace cada herramienta.
 
-GeoShield's validation plan uses four software-only SITL experiments: **01 Normal Autonomous Flight** establishes the GPS-valid route and telemetry baseline; **02 Gradual GPS Manipulation** studies estimator divergence under slow simulated drift; **03 Abrupt GPS Manipulation** studies sudden position jumps; and **04 GeoShield Defence** evaluates anomaly detection and defensive response under simulated manipulation. The completed baseline and its limitations are documented in the [Experiment 01 technical report](docs/experiments/EXP-01_NORMAL_AUTONOMOUS_FLIGHT.md).
+## Estado actual
+
+- **Experimento 01:** vuelo SITL normal A→B→A realizado el 14 de noviembre de 2026. La misión rodeó las zonas configuradas y el vehículo aterrizó en A. El informe enumera qué se midió y qué todavía no quedó demostrado.
+- **Experimentos 02, 03 y 04:** definidos como escenarios de software, pero pendientes. Sus carpetas describen el objetivo y la evidencia que habrá que guardar; no contienen resultados de vuelos.
+- **Evidencia:** CSV de telemetría y ULog del vuelo normal en `docs/experimento-01/evidencia/`. El vídeo de 1,1 GB se mantiene en Drive, siguiendo la decisión anterior de guardar el enlace en el repositorio en lugar del archivo completo.
+
+## Inicio rápido en WSL2
+
+```bash
+cd /mnt/c/Users/Ignacio/Documents/GitHub/GeoShield-compartido/GeoShield
+PX4_DIR="$HOME/PX4-Autopilot"
+cp code/gazebo/worlds/padova.sdf "$PX4_DIR/Tools/simulation/gz/worlds/"
+mkdir -p "$PX4_DIR/Tools/simulation/gz/models/padova_ground"
+cp code/gazebo/models/padova_ground/* "$PX4_DIR/Tools/simulation/gz/models/padova_ground/"
+```
+
+En terminales separadas, desde la raíz del repositorio:
+
+```bash
+bash code/gazebo/launchers/run_padova.sh
+bash code/gazebo/launchers/run_gui.sh
+bash code/gazebo/launchers/cam_birdseye.sh
+```
+
+En QGroundControl, abre **Plan → Open** y selecciona `code/qground/geoshield_padova.plan`. Para instrucciones y dependencias, lee [`docs/traspaso-escenario.md`](docs/traspaso-escenario.md) y los README dentro de `code/`.
+
+## Documentación
+
+- [Resumen de los cuatro experimentos](docs/README.md)
+- [Experimento 01: vuelo normal](docs/experimento-01/README.md)
+- [Informe técnico detallado del Experimento 01](docs/experimento-01/informe-tecnico-en.md)
+- [Traspaso del escenario Padova](docs/traspaso-escenario.md)
+
+Los edificios y el terreno de Gazebo son una representación visual aproximada para SITL; no son un modelo urbano de precisión ni una garantía de colisión física con cada edificio.
