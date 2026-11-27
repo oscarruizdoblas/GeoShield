@@ -1,0 +1,18 @@
+# Python
+__pycache__/
+*.pyc
+*.pyo
+
+# Flight / PX4 logs (large; the relevant telemetry is zipped in docs/)
+logs/
+*.ulg
+*.ulog
+
+# OS
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Temporary files
+*.tmp
+*~

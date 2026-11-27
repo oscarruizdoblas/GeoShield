@@ -1,0 +1,8 @@
+name,mode,response,n_alerts,first_rule,delay_s,offset_at_detection_m,offset_max_m,real_error_max_m,min_dist_bo_m,enters_bo,secs_inside_bo,penetration_bo_m,min_dist_liviano_m,enters_liviano,false_alarm
+normal_flight,none,none,0,,,,0.00,,292.03,False,0.00,0.00,545.93,False,False
+jump_no_response,jump,none,24,salto_GPS,0.13,180.10,180.10,180.34,114.57,True,58.47,105.43,487.10,False,False
+drift_no_response,drift,none,21,innov_sostenida,2.36,2.19,180.10,180.76,114.33,True,61.47,105.67,459.09,False,False
+jump_hold_return,jump,hold_return,24,salto_GPS,0.06,180.10,180.10,180.13,583.43,False,0.00,0.00,408.31,False,False
+drift_hold_return,drift,hold_return,23,innov_sostenida,2.10,1.74,81.56,81.66,568.95,False,0.00,0.00,478.14,False,False
+jump_gps_cut,jump,hold_gps_cut_return,30,salto_GPS,0.03,180.10,180.10,17.81,583.99,False,0.00,0.00,554.18,False,False
+drift_gps_cut,drift,hold_gps_cut_return,35,innov_sostenida,2.30,2.08,85.15,82.57,569.43,False,0.00,0.00,525.82,False,False

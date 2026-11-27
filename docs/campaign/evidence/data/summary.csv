@@ -1,0 +1,8 @@
+scenario,label,flights,total_flight_min,flights_with_false_alarm,alerts_without_attack,detected,missed,delay_mean_s,delay_std_s,delay_min_s,delay_max_s,offset_at_detection_mean_m,first_rules,enter_bo,response_completed
+normal,Normal flight,5,54.198,0,0,,,,,,,,,0,0
+jump,Jump 180 m,5,8.748,0,0,5,0,0.119,0.045,0.064,0.168,180.100,salto_GPS x4; innov_pos x1,0,5
+drift3,Drift 3 m/s,5,8.921,0,0,5,0,2.206,0.129,2.032,2.336,1.857,innov_sostenida x5,0,5
+drift2,Drift 2 m/s,3,5.352,0,0,3,0,2.968,0.186,2.768,3.136,2.267,innov_sostenida x3,0,3
+drift1,Drift 1 m/s,3,15.919,0,0,0,3,,,,,,,3,0
+drift05,Drift 0.5 m/s,3,15.998,0,0,0,3,,,,,,,0,1
+drift1_novel,"Drift 1 m/s, no velocity",3,6.310,0,0,3,0,7.699,0.060,7.664,7.768,5.751,deriva_gradual x3,0,3

@@ -1,0 +1,13 @@
+# Force LF line endings on everything that runs in WSL/Linux,
+# so the scripts do not break when the repository is cloned on Windows.
+*.sh    text eol=lf
+*.py    text eol=lf
+*.sdf   text eol=lf
+*.obj   text eol=lf
+*.mtl   text eol=lf
+*.plan  text eol=lf
+*.md    text eol=lf
+
+# Binary files
+*.png   binary
+*.zip   binary
